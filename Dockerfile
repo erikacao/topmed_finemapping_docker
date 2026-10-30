@@ -91,16 +91,15 @@ RUN Rscript -e "install.packages(c('remotes', 'Rcpp', 'RcppArmadillo'))"
 # Pin older Rcpp and RcppArmadillo
 #
 # Compatibility candidates:
-# Rcpp 1.0.12
+# Rcpp 1.0.14
 # RcppArmadillo 0.12.8.4.0
 #
 # These avoid newer Armadillo's C++14 requirement.
 # ============================================================
-
 RUN Rscript -e " \
     remotes::install_version( \
         'Rcpp', \
-        version='1.0.12', \
+        version='1.0.14', \
         repos='https://cloud.r-project.org', \
         upgrade='never' \
     ); \
@@ -111,7 +110,7 @@ RUN Rscript -e " \
         upgrade='never' \
     ); \
     stopifnot( \
-        as.character(packageVersion('Rcpp')) == '1.0.12', \
+        as.character(packageVersion('Rcpp')) == '1.0.14', \
         as.character(packageVersion('RcppArmadillo')) == '0.12.8.4.0' \
     ) \
 "
@@ -152,6 +151,23 @@ RUN Rscript -e " \
 # ============================================================
 # Install rbcor
 # ============================================================
+RUN Rscript -e " \
+    cat('Rcpp:', as.character(packageVersion('Rcpp')), '\n'); \
+    cat('RcppArmadillo:', as.character(packageVersion('RcppArmadillo')), '\n'); \
+    cat('RcppArmadillo Rcpp requirement:', \
+        packageDescription('RcppArmadillo')\$Imports, '\n') \
+"
+
+
+RUN Rscript -e " \
+    stopifnot( \
+        as.character(packageVersion('Rcpp')) == '1.0.14', \
+        as.character(packageVersion('RcppArmadillo')) == '0.12.8.4.0' \
+    ); \
+    cat('Rcpp versions verified\n') \
+"
+
+
 
 RUN Rscript -e " \
     remotes::install_github( \
