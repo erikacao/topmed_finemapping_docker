@@ -45,6 +45,7 @@ RUN apt-get update && apt-get install -y \
     liblzma5 \
     libopenblas-dev \
     libsqlite3-dev \
+    libuv1-dev \
     libssl-dev \
     parallel \
     pigz \
@@ -71,11 +72,24 @@ RUN Rscript -e "remotes::install_github( \
     'stephenslab/susieR', ref='v0.14.2', \
     dependencies=TRUE, upgrade='never')"
 
-# BCOR support
-RUN Rscript -e "remotes::install_github( \
-    'mkanai/rbcor', \
-    ref='d2be97234f633def9dcfe304fc5430e3a8caf160', \
-    dependencies=TRUE, upgrade='never')"
+# Force C++14 for R package compilation
+RUN mkdir -p /root/.R && \
+    printf 'CXX11 = g++ -std=gnu++14\nCXX11STD = -std=gnu++14\n' \
+    > /root/.R/Makevars
+
+    
+# Install rbcor
+RUN Rscript -e " \
+    remotes::install_github( \
+        'mkanai/rbcor', \
+        ref='d2be97234f633def9dcfe304fc5430e3a8caf160', \
+        dependencies=NA, \
+        upgrade='never', \
+        force=TRUE \
+    ); \
+    stopifnot(requireNamespace('rbcor', quietly=TRUE)); \
+    cat('rbcor successfully installed\n') \
+"
 
 # ldcov
 RUN pip3 install --break-system-packages \
