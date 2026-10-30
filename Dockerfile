@@ -91,16 +91,14 @@ RUN ldcov --help > /dev/null \
 # FinnGen SuSiE wrapper
 COPY R/run_susieR.R /usr/local/bin/run_susieR.R
 
-RUN chmod +x /usr/local/bin/run_susieR.R
-
 # HTSlib binaries
 COPY --from=builder /usr/bin/bgzip /usr/bin/bgzip
 COPY --from=builder /usr/bin/tabix /usr/bin/tabix
+COPY --from=builder /usr/lib/libhts.so* /usr/lib/
 
 # Verify dependencies
 RUN python3 -c "import ldcov; print('ldcov installed')" \
-    && Rscript -e "library(susieR); library(rbcor); \
-    print(packageVersion('susieR'))" \
-    && command -v bgzip \
-    && command -v tabix \
-    && command -v run_susieR.R
+    && ldcov --help > /dev/null \
+    && Rscript -e "library(susieR); library(rbcor); print(packageVersion('susieR'))" \
+    && bgzip --version \
+    && tabix --version
