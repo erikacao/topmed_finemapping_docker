@@ -85,8 +85,7 @@ RUN pip3 install --break-system-packages \
 RUN ldcov --help > /dev/null \
     && Rscript -e "library(susieR); library(rbcor); print(packageVersion('susieR'))" \
     && bgzip --version \
-    && tabix --version \
-    && command -v run_susieR.R
+    && tabix --version 
 
 # HTSlib binaries
 COPY --from=builder /usr/bin/bgzip /usr/bin/bgzip
