@@ -88,9 +88,6 @@ RUN ldcov --help > /dev/null \
     && tabix --version \
     && command -v run_susieR.R
 
-# FinnGen SuSiE wrapper
-COPY R/run_susieR.R /usr/local/bin/run_susieR.R
-
 # HTSlib binaries
 COPY --from=builder /usr/bin/bgzip /usr/bin/bgzip
 COPY --from=builder /usr/bin/tabix /usr/bin/tabix
