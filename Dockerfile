@@ -92,9 +92,22 @@ COPY --from=builder /usr/bin/bgzip /usr/bin/bgzip
 COPY --from=builder /usr/bin/tabix /usr/bin/tabix
 COPY --from=builder /usr/lib/libhts.so* /usr/lib/
 
-# Verify dependencies
-RUN python3 -c "import ldcov; print('ldcov installed')" \
-    && ldcov --help > /dev/null \
-    && Rscript -e "library(susieR); library(rbcor); print(packageVersion('susieR'))" \
-    && bgzip --version \
-    && tabix --version
+# Verify dependencies individually
+
+RUN echo "===== Checking ldcov executable =====" && \
+    command -v ldcov
+
+RUN echo "===== Checking ldcov Python package =====" && \
+    python3 -c "import ldcov; print('ldcov imported successfully')"
+
+RUN echo "===== Checking susieR =====" && \
+    Rscript -e "library(susieR); print(packageVersion('susieR'))"
+
+RUN echo "===== Checking rbcor =====" && \
+    Rscript -e "library(rbcor); print('rbcor loaded successfully')"
+
+RUN echo "===== Checking bgzip =====" && \
+    bgzip --version
+
+RUN echo "===== Checking tabix =====" && \
+    tabix --version
