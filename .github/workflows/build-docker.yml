@@ -10,7 +10,9 @@ on:
       - Dockerfile
       - "R/**"
       - ".github/workflows/build-docker.yml"
-
+env:
+  BUILDKIT_PROGRESS: plain
+  
 permissions:
   contents: read
   packages: write
